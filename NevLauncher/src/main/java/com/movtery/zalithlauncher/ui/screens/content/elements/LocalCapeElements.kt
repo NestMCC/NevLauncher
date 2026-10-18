@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.context.copyLocalFile
 import com.movtery.zalithlauncher.game.account.Account
+import com.movtery.zalithlauncher.game.account.isLocalAccount
 import com.movtery.zalithlauncher.game.account.wardrobe.LocalCape
 import com.movtery.zalithlauncher.game.account.wardrobe.LocalCapeLibrary
 import com.movtery.zalithlauncher.game.account.wardrobe.NoLocalCape
