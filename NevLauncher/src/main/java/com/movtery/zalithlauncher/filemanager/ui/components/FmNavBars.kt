@@ -18,6 +18,18 @@
 
 package com.movtery.zalithlauncher.filemanager.ui.components
 
+import com.movtery.zalithlauncher.ui.theme.nevShape
+import com.movtery.zalithlauncher.ui.theme.LocalNevStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -58,8 +70,17 @@ fun FmBottomBar(
     onRangeSelectHelp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val neon = MaterialTheme.colorScheme.primary
+    val cyber = LocalNevStyle.current.cyber
     Surface(
-        modifier = modifier,
+        modifier = modifier.then(
+            if (cyber) {
+                //garis neon di tepi atas bar bawah (gaya Cyber)
+                Modifier.drawBehind {
+                    drawLine(neon, Offset(0f, 0f), Offset(size.width, 0f), 1.5.dp.toPx())
+                }
+            } else Modifier
+        ),
         color = fmCardColor(),
         contentColor = fmOnCardColor(),
     ) {
@@ -187,6 +208,10 @@ fun FmNavRail(
     }
 }
 
+/**
+ * Item menu samping File: mengikuti item sidebar launcher (ikon + label, warna tema).
+ * Gaya Cyber: label huruf kapital dan bingkai neon tipis.
+ */
 @Composable
 private fun RailItem(
     icon: Painter,
@@ -194,15 +219,35 @@ private fun RailItem(
     onClick: () -> Unit,
     enabled: Boolean = true
 ) {
-    NavigationRailItem(
-        selected = false,
-        enabled = enabled,
-        onClick = onClick,
-        icon = {
-            Icon(icon, contentDescription = null)
-        },
-        label = {
-            Text(stringResource(labelRes))
-        }
-    )
+    val cyber = LocalNevStyle.current.cyber
+    val shape = nevShape(14.dp)
+    val tint = MaterialTheme.colorScheme.primary
+    val label = stringResource(labelRes)
+    Column(
+        modifier = Modifier
+            .width(72.dp)
+            .alpha(if (enabled) 1f else 0.38f)
+            .clip(shape)
+            .then(
+                if (cyber) Modifier.border(1.dp, tint.copy(alpha = 0.35f), shape) else Modifier
+            )
+            .clickable(enabled = enabled, onClick = onClick)
+            .padding(vertical = 8.dp, horizontal = 4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Icon(
+            modifier = Modifier.size(24.dp),
+            painter = icon,
+            contentDescription = null,
+            tint = tint
+        )
+        Text(
+            text = if (cyber) label.uppercase() else label,
+            style = MaterialTheme.typography.labelSmall,
+            color = fmOnCardColor(),
+            textAlign = TextAlign.Center,
+            maxLines = 1
+        )
+    }
 }

@@ -18,6 +18,12 @@
 
 package com.movtery.zalithlauncher.filemanager.ui.components
 
+import com.movtery.zalithlauncher.ui.theme.NevCardBorder
+import com.movtery.zalithlauncher.ui.theme.cyberFrame
+import com.movtery.zalithlauncher.ui.theme.nevShape
+import com.movtery.zalithlauncher.ui.theme.LocalNevStyle
+import com.movtery.zalithlauncher.filemanager.ui.theme.fmMenuBorder
+import com.movtery.zalithlauncher.filemanager.ui.theme.fmMenuContainerColor
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
@@ -82,7 +88,9 @@ fun FmEntryItem(
     onDelete: () -> Unit = {}
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
-    val shape = rememberFmCardShape(position)
+    val navStyle = LocalNevStyle.current
+    //gaya potong-sudut (Cryogenic/Cyber): bentuk kartu mengikuti launcher; gaya klasik tetap berkelompok
+    val shape = if (navStyle.cutCorners) nevShape(16.dp) else rememberFmCardShape(position)
     val swipeState = rememberFmSwipeTriggerState()
     val selectionColor = fmSelectionColor()
     val unselectionColor = selectionColor.copy(alpha = 0f)
@@ -101,6 +109,7 @@ fun FmEntryItem(
         modifier = modifier
             .zIndex(if (swipeState.isDragging) 1f else 0f)
             .fillMaxWidth()
+            .then(if (navStyle.cyber) Modifier.cyberFrame() else Modifier)
             .fmSwipeTrigger(
                 state = swipeState,
                 // 任意条目均可作为选区边界
@@ -109,6 +118,7 @@ fun FmEntryItem(
             ),
         shape = shape,
         color = fmCardColor(),
+        border = NevCardBorder,
         shadowElevation = 6.dp * swipeState.dragFraction
     ) {
         Row(
@@ -265,7 +275,10 @@ private fun FmEntryMenu(
         expanded = expanded,
         onDismissRequest = onDismiss,
         shape = MaterialTheme.shapes.large,
-        shadowElevation = 3.dp
+        containerColor = fmMenuContainerColor(),
+        tonalElevation = 0.dp,
+        border = fmMenuBorder(),
+        shadowElevation = 12.dp
     ) {
         if (entry.archiveType == null) {
             if (entry.isFile) {

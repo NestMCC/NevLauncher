@@ -18,6 +18,13 @@
 
 package com.movtery.zalithlauncher.filemanager.ui.components
 
+import com.movtery.zalithlauncher.ui.theme.LocalNevStyle
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.drawBehind
+import com.movtery.zalithlauncher.filemanager.ui.theme.fmMenuBorder
+import com.movtery.zalithlauncher.filemanager.ui.theme.fmMenuContainerColor
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.basicMarquee
@@ -83,7 +90,20 @@ fun FmAppBar(
     var menuExpanded by remember { mutableStateOf(false) }
     var sortExpanded by remember { mutableStateOf(false) }
 
+    val neon = MaterialTheme.colorScheme.primary
+    val neonEnd = MaterialTheme.colorScheme.tertiary
     TopAppBar(
+        modifier = if (LocalNevStyle.current.cyber) {
+            Modifier.drawBehind {
+                val y = size.height - 1.dp.toPx()
+                drawLine(
+                    brush = Brush.horizontalGradient(listOf(neon, neonEnd, Color.Transparent)),
+                    start = Offset(0f, y),
+                    end = Offset(size.width, y),
+                    strokeWidth = 1.5.dp.toPx()
+                )
+            }
+        } else Modifier,
         colors = fmTopbarColors(),
         title = {
             Column(
@@ -149,7 +169,10 @@ fun FmAppBar(
                     sortExpanded = false
                 },
                 shape = MaterialTheme.shapes.large,
-                shadowElevation = 3.dp
+                containerColor = fmMenuContainerColor(),
+                tonalElevation = 0.dp,
+                border = fmMenuBorder(),
+                shadowElevation = 12.dp
             ) {
                 DropdownMenuItem(
                     text = {
@@ -344,7 +367,10 @@ private fun SortSubmenu(
         expanded = expanded,
         onDismissRequest = { onExpandedChange(false) },
         shape = MaterialTheme.shapes.large,
-        shadowElevation = 3.dp
+        containerColor = fmMenuContainerColor(),
+        tonalElevation = 0.dp,
+        border = fmMenuBorder(),
+        shadowElevation = 12.dp
     ) {
         SortMenuItem(
             labelRes = R.string.fm_sort_name,

@@ -18,6 +18,9 @@
 
 package com.movtery.zalithlauncher.filemanager.ui.components
 
+import com.movtery.zalithlauncher.ui.theme.nevShape
+import com.movtery.zalithlauncher.ui.theme.LocalNevStyle
+import androidx.compose.foundation.border
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -37,24 +40,23 @@ import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.filemanager.logic.entry.ArchiveType
 
 /**
- * 条目类型对应的图标与配色，配色取自固定预设色板
- * 亮色主题下圆底使用 tone90、图标使用 tone30，暗色主题下互换
+ * Jenis ikon entri; warnanya diambil dari tema launcher yang aktif (bukan warna tetap),
+ * sehingga folder/berkas ikut berubah bersama tema warna.
  */
 private enum class FmFileIcon(
     @DrawableRes val iconRes: Int,
-    val tone90: Color,
-    val tone30: Color
+    val accent: FmAccent
 ) {
-    DIRECTORY(R.drawable.ic_folder_filled, Color(0xFFD3E3FD), Color(0xFF0842A0)),
-    ARCHIVE(R.drawable.ic_folder_zip_filled, Color(0xFFFFDCC2), Color(0xFF7A3E00)),
-    JAR(R.drawable.ic_coffee_filled, Color(0xFFEAD8BC), Color(0xFF4A2E10)),
-    APK(R.drawable.ic_android_filled, Color(0xFFE6F2A8), Color(0xFF3F4A09)),
-    CODE(R.drawable.ic_code, Color(0xFFDFE2FF), Color(0xFF26316E)),
-    TEXT(R.drawable.ic_text_snippet_filled, Color(0xFFB4EBE5), Color(0xFF004F49)),
-    IMAGE(R.drawable.ic_image_filled, Color(0xFFC4EED0), Color(0xFF0F5223)),
-    AUDIO(R.drawable.ic_audio_file_filled, Color(0xFFEADDFF), Color(0xFF4F378B)),
-    VIDEO(R.drawable.ic_movie_filled, Color(0xFFFFD9E2), Color(0xFF5C1240)),
-    UNKNOWN(R.drawable.ic_draft_filled, Color(0xFFE3E2E6), Color(0xFF46464F));
+    DIRECTORY(R.drawable.ic_folder_filled, FmAccent.PRIMARY),
+    ARCHIVE(R.drawable.ic_folder_zip_filled, FmAccent.TERTIARY),
+    JAR(R.drawable.ic_coffee_filled, FmAccent.SECONDARY),
+    APK(R.drawable.ic_android_filled, FmAccent.PRIMARY),
+    CODE(R.drawable.ic_code, FmAccent.TERTIARY),
+    TEXT(R.drawable.ic_text_snippet_filled, FmAccent.SECONDARY),
+    IMAGE(R.drawable.ic_image_filled, FmAccent.PRIMARY),
+    AUDIO(R.drawable.ic_audio_file_filled, FmAccent.TERTIARY),
+    VIDEO(R.drawable.ic_movie_filled, FmAccent.SECONDARY),
+    UNKNOWN(R.drawable.ic_draft_filled, FmAccent.MUTED);
 
     companion object {
         fun of(name: String): FmFileIcon {
@@ -75,6 +77,8 @@ private enum class FmFileIcon(
     }
 }
 
+private enum class FmAccent { PRIMARY, SECONDARY, TERTIARY, MUTED }
+
 object FmIcons {
     /** 根据条目类型与扩展名显示对应图标 */
     @Composable
@@ -84,19 +88,28 @@ object FmIcons {
         modifier: Modifier = Modifier,
     ) {
         val style = if (isDirectory) FmFileIcon.DIRECTORY else FmFileIcon.of(name)
-        val darkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
+        val scheme = MaterialTheme.colorScheme
+        val accent = when (style.accent) {
+            FmAccent.PRIMARY -> scheme.primary
+            FmAccent.SECONDARY -> scheme.secondary
+            FmAccent.TERTIARY -> scheme.tertiary
+            FmAccent.MUTED -> scheme.onSurfaceVariant
+        }
+        //gaya potong-sudut: ubin bersudut potong; gaya klasik: lingkaran
+        val shape = if (LocalNevStyle.current.cutCorners) nevShape(12.dp) else CircleShape
         Box(
             modifier = modifier
                 .size(40.dp)
-                .clip(CircleShape)
-                .background(if (darkTheme) style.tone30 else style.tone90),
+                .clip(shape)
+                .background(accent.copy(alpha = 0.18f))
+                .border(1.dp, accent.copy(alpha = 0.55f), shape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
                 painter = painterResource(style.iconRes),
                 contentDescription = null,
-                tint = if (darkTheme) style.tone90 else style.tone30
+                tint = accent
             )
         }
     }

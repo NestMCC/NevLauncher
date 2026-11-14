@@ -18,6 +18,10 @@
 
 package com.movtery.zalithlauncher.filemanager.ui
 
+import com.movtery.zalithlauncher.ui.theme.cyberBackdrop
+import com.movtery.zalithlauncher.ui.theme.LocalNevStyle
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.background
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
@@ -156,8 +160,11 @@ fun FileManagerRootScreen(
                     var gestureActive by remember { mutableStateOf(false) }
 
                     Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = fmBackgroundColor(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(fmBackgroundColor())
+                            .then(if (LocalNevStyle.current.cyber) Modifier.cyberBackdrop() else Modifier),
+                        color = Color.Transparent,
                         contentColor = fmOnBackgroundColor(),
                     ) {
                         if (backStack.isNotEmpty()) {

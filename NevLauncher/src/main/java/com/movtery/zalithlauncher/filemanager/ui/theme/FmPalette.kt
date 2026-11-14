@@ -18,6 +18,12 @@
 
 package com.movtery.zalithlauncher.filemanager.ui.theme
 
+import com.movtery.zalithlauncher.ui.theme.LocalNevStyle
+import com.movtery.zalithlauncher.ui.theme.NevCardBorder
+import com.movtery.zalithlauncher.ui.theme.NevRed
+import com.movtery.zalithlauncher.ui.theme.onBackgroundColor
+import com.movtery.zalithlauncher.ui.theme.backgroundColor
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
@@ -25,12 +31,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun fmBackgroundColor(): Color = MaterialTheme.colorScheme.surfaceContainer
+fun fmBackgroundColor(): Color = backgroundColor()
 @Composable
-fun fmOnBackgroundColor(): Color = MaterialTheme.colorScheme.onSurfaceVariant
+fun fmOnBackgroundColor(): Color = onBackgroundColor()
 
 @Composable
-fun fmCardColor(): Color = MaterialTheme.colorScheme.surfaceBright
+fun fmCardColor(): Color = NevRed.Panel.copy(alpha = LocalNevStyle.current.cardAlpha)
 @Composable
 fun fmOnCardColor(): Color = MaterialTheme.colorScheme.onSurface
 
@@ -52,6 +58,14 @@ fun fmTopbarColors(): TopAppBarColors = TopAppBarDefaults.topAppBarColors(
     actionIconContentColor = fmOnBackgroundColor(),
     subtitleContentColor = fmOnBackgroundColor(),
 )
+
+/** Warna latar menu popup File: sama dengan menu popup launcher. */
+@Composable
+fun fmMenuContainerColor(): Color = NevRed.PanelDeep
+
+/** Garis tepi menu popup File: sama dengan menu popup launcher. */
+@Composable
+fun fmMenuBorder(): BorderStroke = NevCardBorder
 
 object FmAnimations {
     /** 滑动触发回弹动画时长（ms） */
